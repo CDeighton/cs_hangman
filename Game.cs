@@ -24,21 +24,28 @@ class Game {
             if (!IsCorrect(guess)) lives--;
         }
 
-        DisplayEndGame();
+        if (IsWon()) DisplayWin();
+        else DisplayLoss();
     }
 
     private void DisplayMaskedWord() {
-        // TODO mask word
-        Console.WriteLine(word);
+        Console.WriteLine(MaskedWord());
     }
 
     private void DisplayGuesses() {
         Console.WriteLine(String.Join(", ", guesses));
     }
 
-    private void DisplayEndGame() {
-        if (IsWon()) Console.WriteLine("You won");
-        else Console.WriteLine("Loser");
+    private void DisplayWin() {
+        Console.WriteLine("You won");
+    }
+
+    private void DisplayLoss() {
+        Console.WriteLine("The word was {0}. Loser.", word);
+    }
+
+    private string MaskedWord() {
+        return String.Join("", word.Select((c) => IsGuessed(c) ? c : '_'));
     }
 
     private char RequestGuess() {
@@ -57,7 +64,7 @@ class Game {
     }
 
     private bool IsWon() {
-        return word.All((c) => guesses.IndexOf(c) != -1);
+        return word.All((c) => IsGuessed(c));
     }
 
     private bool IsLost() {
@@ -66,5 +73,9 @@ class Game {
 
     private bool IsCorrect(char guess) {
         return word.Contains(guess);
+    }
+
+    private bool IsGuessed(char c) {
+        return guesses.IndexOf(c) != -1;
     }
 }
