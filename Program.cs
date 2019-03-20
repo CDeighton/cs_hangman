@@ -8,33 +8,23 @@ namespace cs_hangman {
             string[] words = File.ReadAllLines(@"dictionary.txt", Encoding.UTF8);
             Random random = new Random();
 
-            Word word = new Word(words[random.Next(words.Length)]);
+            string word = words[random.Next(words.Length)];
+            IHangmanUI ui = new HangmanUI();
             Game game = new Game(word);
 
             while (game.InProgress()) {
-                Console.WriteLine(word.Mask(game.guesses));
-                Console.WriteLine(String.Join(", ", game.guesses));
+                ui.ShowMaskedWord(word, game.guesses);
+                ui.ShowGuesses(game.guesses);
 
-                game.MakeGuess(RequestGuess());
+                game.MakeGuess(ui.RequestGuess());
             }
 
             if (game.IsWon()) {
-                Console.WriteLine("You won");
+                ui.ShowGameWon();
             }
             else {
-                Console.WriteLine("The word was {0}. Loser.", word.ToString());
+                ui.ShowGameLost(word);
             }
-        }
-
-        public static char RequestGuess() {
-            string guess;
-
-            do {
-                Console.WriteLine("Make a guess (one character only): ");
-                guess = Console.ReadLine();
-            } while(guess.Length != 1);
-
-            return guess[0];
         }
     }
 }
